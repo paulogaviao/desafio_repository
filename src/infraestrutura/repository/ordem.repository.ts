@@ -88,18 +88,6 @@ async findAll(): Promise<Ordem[]> {
       
       return ordem;
   });
-  /*let ordens : Ordem[] =[];
-  for (let index = 0; index < ordemModels.length; index++) {
-    let ordemModel= ordemModels[index];
-    let ordemItens: OrderItem[] = [];
-    for (let index = 0; index < ordemModel.items.length; index++) {
-      const item = ordemModel.items[index];
-      const ordemItem = new OrderItem(item.id,item.nome,item.preco,item.quantidade,item.produto_id);
-      ordemItens.push(ordemItem); 
-    }
-      const ordem = new Ordem(ordemModel.id,ordemModel.cliente_id, ordemItens);
-      ordens.push(ordem);
-  }*/
   return ordens;
 }
 
