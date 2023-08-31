@@ -117,7 +117,7 @@ describe("Order repository test", () => {
       cliente_id: "123",
       total: order.total(),
     });
-
+  console.log(orderModel.toJSON());
   });
 
   it("pesquisa ordem", async () => {
