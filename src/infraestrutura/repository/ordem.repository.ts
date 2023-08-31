@@ -2,8 +2,9 @@ import Ordem from "../../domain/entity/ordem";
 import OrdemItemModel from "../db/sequelize/model/ordemItem.model";
 import OrdemModel from "../db/sequelize/model/ordem.model";
 import OrderItem from "../../domain/entity/orderItem";
+import OrdemRepositoryInterface from "../../domain/repository/ordemRepositoryInterface";
 
-export default class OrderRepository {
+export default class OrderRepository implements OrdemRepositoryInterface{
   async create(entity: Ordem): Promise<void> {
     await OrdemModel.create(
       {
@@ -25,26 +26,25 @@ export default class OrderRepository {
   }
 
   async update(entity :Ordem):Promise<void>{
-    OrdemModel.update(
-        {
-          id: entity.id,
-          cliente_id: entity.idCliente,
-          total: entity.total(),
-          items: entity.items.map((item) => ({
-            id: item.id,
-            nome: item.nome,
-            preco: item.preco,
-            quantidade: item.quantidade,
-            produto_id: item.idProduto,
-          }))
-        },
-        {
-          where:{
-              id:entity.id
-          } 
-        }
-        
-    );
+    const orderModel = await OrdemModel.findOne({ where: { id: entity.id }, include: [OrdemItemModel] });
+    if (orderModel) {
+      const items: OrderItem[] = entity.items.map((item) => {
+        return new OrderItem(
+          item.id,
+          item.nome,
+          item.preco,
+          item.quantidade,
+          item.idProduto,
+        );
+      });
+      console.log(items);
+      await orderModel.update({
+        customer_id: entity.idCliente,
+        total: entity.total(),
+        items
+      });
+      
+    }    
 }
 
 async find(id: string): Promise<Ordem> {
@@ -88,18 +88,6 @@ async findAll(): Promise<Ordem[]> {
       
       return ordem;
   });
-  /*let ordens : Ordem[] =[];
-  for (let index = 0; index < ordemModels.length; index++) {
-    let ordemModel= ordemModels[index];
-    let ordemItens: OrderItem[] = [];
-    for (let index = 0; index < ordemModel.items.length; index++) {
-      const item = ordemModel.items[index];
-      const ordemItem = new OrderItem(item.id,item.nome,item.preco,item.quantidade,item.produto_id);
-      ordemItens.push(ordemItem); 
-    }
-      const ordem = new Ordem(ordemModel.id,ordemModel.cliente_id, ordemItens);
-      ordens.push(ordem);
-  }*/
   return ordens;
 }
 
