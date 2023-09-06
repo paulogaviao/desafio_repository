@@ -27,4 +27,15 @@ export default class EventEnvia implements EventEnviaInterface{
         }
         this.eventHandlers[eventName].push(eventHandler);
     };
+
+      altera(eventName:string, eventHandler:EventHandlerInterface , eventHandlerUpdate:EventHandlerInterface): void{
+        if(!this.eventHandlers[eventName]){
+            this.eventHandlers[eventName] = [];
+        }else {
+            const index = this.eventHandlers[eventName].indexOf(eventHandler);
+            if (index !== -1) {
+              this.eventHandlers[eventName][index] = eventHandlerUpdate;
+            }
+        }
+    };
 }
