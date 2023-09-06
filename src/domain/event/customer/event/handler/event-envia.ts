@@ -1,6 +1,7 @@
 import EventHandlerInterface from "../../../@shared/event-handler.interface";
 
 import CustomerCreatedEvent from "../../../customer/event/customer-created.event";
+import CustomerUpdateEvent from "../customer-update.event";
 import EventEnviaInterface from "./event-envia.interface";
 
 export default class EventEnvia implements EventEnviaInterface{
