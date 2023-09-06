@@ -8,9 +8,8 @@ describe("teste de notificacao altera endereco",()=>{
 
 
     it("alterando endereco e printando console",()=>{
-      
-        const eventDispatcher = new EventEnvia();
-        const eventHandler = new EnviaConsoleLog3Handler();
+       const eventDispatcher = new EventEnvia();
+        const eventHandler = new EnviaConsoleLog2Handler();
         
         const spyEventHandler = jest.spyOn(eventHandler, "handle");
         eventDispatcher.cria("CustomerCreatedEvent",eventHandler);
@@ -31,7 +30,20 @@ describe("teste de notificacao altera endereco",()=>{
         
         const enderecoNovo = new Endereco("Street 2", 1, "Zipcode 2", "City 2");
         clientets.changeAddress(enderecoNovo);
+
+        const eventHandler2 = new EnviaConsoleLog3Handler();
         
+        eventDispatcher.altera(cliente.constructor.name,eventHandler, eventHandler2);
+        
+        const clienteStringUp = "Endereço do cliente: {" + clientets.id + "}, {" + clientets.nome 
+        + "} alterado para: " + "RUA: "+clientets.endereco._rua + ", NUMERO: "+clientets.endereco._numero
+        + ",CEP: "+clientets.endereco._cep + ",CIDADE: "+clientets.endereco._cidade ;
+
+        const clienteUp = new CustomerCreatedEvent({
+            clienteStringUp
+        });
+        eventDispatcher.notifica(clienteUp);
+
         expect(spyEventHandler).toHaveBeenCalled();
     });
 })
