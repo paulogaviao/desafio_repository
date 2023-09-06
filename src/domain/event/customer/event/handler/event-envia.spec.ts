@@ -1,6 +1,7 @@
 import Cliente from "../../../../entity/cliente";
 import Endereco from "../../../../entity/endereco";
 import CustomerCreatedEvent from "../customer-created.event";
+import EnviaConsoleLog2Handler from "./envia-console-log2-handler";
 import EnviaConsoleLog3Handler from "./envia-console-log3-handler";
 import EventEnvia from "./event-envia";
 
