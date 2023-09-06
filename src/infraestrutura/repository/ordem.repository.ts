@@ -26,47 +26,26 @@ export default class OrderRepository implements OrdemRepositoryInterface{
   }
 
   async update(entity :Ordem):Promise<void>{
-    const orderModel = await OrdemModel.findOne({ where: { id: entity.id }, include: [OrdemItemModel] });
-    if (orderModel) {
-      const items: OrderItem[] = entity.items.map((item) => {
-        return new OrderItem(
-          item.id,
-          item.nome,
-          item.preco,
-          item.quantidade,
-          item.idProduto,
-          
-        );
-      });
-      console.log(items);
-      await orderModel.update({
-        customer_id: entity.idCliente,
-        total: entity.total(),
-        items
-      });
-      
-    }    
-
-   /*await OrdemModel.update(
-        {
-          id: entity.id,
-          cliente_id: entity.idCliente,
-          total: entity.total(),
-          items: entity.items.map((item) => ({
-            id: item.id,
-            nome: item.nome,
-            preco: item.preco,
-            quantidade: item.quantidade,
-            produto_id: item.idProduto,
-          }))
-        },
-        {
-          where:{
-              id:entity.id
-          } 
-        }
-        
-    );*/
+    const sequelize = OrdemModel.sequelize
+    await sequelize.transaction(async (t) => {
+      await OrdemItemModel.destroy({
+        where: { ordem_id: entity.id },
+        transaction: t,
+      })
+      const items = entity.items.map((item) => ({
+        id: item.id,
+        produto_id: item.idProduto,
+        nome: item.nome,
+        preco: item.preco,
+        quantidade: item.quantidade,
+        ordem_id: entity.id,
+      }))
+      await OrdemItemModel.bulkCreate(items, { transaction: t })
+      await OrdemModel.update(
+        { cliente_id: entity.idCliente, total: entity.total() },
+        { where: { id: entity.id }, transaction: t }
+      )
+    })
 }
 
 async find(id: string): Promise<Ordem> {
