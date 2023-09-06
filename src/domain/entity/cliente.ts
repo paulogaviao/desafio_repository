@@ -1,3 +1,6 @@
+import CustomerCreatedEvent from "../event/customer/event/customer-created.event";
+import EnviaConsoleLog3Handler from "../event/customer/event/handler/envia-console-log3-handler";
+import EventEnvia from "../event/customer/event/handler/event-envia";
 import Endereco from "./endereco" 
 export default class Cliente {
     private _id:string;
@@ -41,7 +44,19 @@ export default class Cliente {
     }
 
     changeAddress(endereco: Endereco) {
-        this._endereco = endereco;
+       this._endereco = endereco;
+        const eventHandler = new EnviaConsoleLog3Handler();
+        const eventDispatcher = new EventEnvia();
+        eventDispatcher.cria("CustomerCreatedEvent",eventHandler);
+        
+        const clienteString = "Endereço do cliente: {" + this._id + "}, {" + this._nome 
+        + "} alterado para: " + "RUA: "+this._endereco._rua + ", NUMERO: "+this._endereco._numero
+        + ",CEP: "+this._endereco._cep + ",CIDADE: "+this._endereco._cidade ;
+
+        const cliente = new CustomerCreatedEvent({
+            clienteString
+        });
+        eventDispatcher.notifica(cliente);
       }
 
     somaPontos(pontos: number){
