@@ -8,6 +8,7 @@ describe("teste de notificacao altera endereco",()=>{
 
 
     it("alterando endereco e printando console",()=>{
+      
         const eventDispatcher = new EventEnvia();
         const eventHandler = new EnviaConsoleLog3Handler();
         
@@ -18,16 +19,19 @@ describe("teste de notificacao altera endereco",()=>{
         const clientets = new Cliente("123", "Customer 1");
         const endereco = new Endereco("Street 1", 1, "Zipcode 1", "City 1");
         clientets.endereco = endereco;
-        const enderecoNovo = new Endereco("Street 2", 1, "Zipcode 2", "City 2");
-        clientets.changeAddress(enderecoNovo);
+
         const clienteString = "Endereço do cliente: {" + clientets.id + "}, {" + clientets.nome 
-        + "} alterado para: " + "RUA: "+clientets.endereco._rua + ", NUMERO: "+clientets.endereco._numero
+        + "} inserido  com: " + "RUA: "+clientets.endereco._rua + ", NUMERO: "+clientets.endereco._numero
         + ",CEP: "+clientets.endereco._cep + ",CIDADE: "+clientets.endereco._cidade ;
+
         const cliente = new CustomerCreatedEvent({
             clienteString
         });
-
         eventDispatcher.notifica(cliente);
+        
+        const enderecoNovo = new Endereco("Street 2", 1, "Zipcode 2", "City 2");
+        clientets.changeAddress(enderecoNovo);
+        
         expect(spyEventHandler).toHaveBeenCalled();
     });
 })
